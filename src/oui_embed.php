@@ -51,7 +51,7 @@ oui_instagram’s minimum requirements:
 
 h2(#installation). Installation
 
-# Download "Embed":https://github.com/oscarotero/Embed by Oscar Otero and paste the embed folder in your textpattern/vendors folder;
+# Download "Embed":https://github.com/oscarotero/Embed/releases by Oscar Otero, rename the src folder to embed and paste it in your textpattern/vendors folder;
 # paste the content of the plugin file under the *Admin > Plugins*, upload it and install.
 
 h2(#tag). Tag
