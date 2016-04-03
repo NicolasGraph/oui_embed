@@ -31,6 +31,8 @@ if (0) {
 # --- BEGIN PLUGIN HELP ---
 h1. oui_embed
 
+*! In process; this plugin is not released yet…*
+
 Easily embed stuff…
 
 h2. Table of contents
@@ -86,7 +88,11 @@ h2(#styling). Styling
 
 h3. Responsive use
 
+To make your embed content fit the width of its container and keep its ratio, use the @responsive@ attribute…
+
 bc. <txp:oui_embed url="https://www.youtube.com/watch?v=PP1xn5wHtxE" responsive="1" />
+
+…and add the following css rules to your stylesheet.
 
 bc.. .oui_embed // or your wrap class // {
 	position: relative;
@@ -103,7 +109,7 @@ bc.. .oui_embed // or your wrap class // {
 
 h2(#author). Author
 
-"Nicolas Morand":https://github.com/NicolasGraph.
+"Nicolas Morand":https://github.com/NicolasGraph
 
 h2(#licence). Licence
 
