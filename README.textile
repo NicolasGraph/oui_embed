@@ -1,5 +1,7 @@
 h1. oui_embed
 
+*In progress - This plugin is not released yet*
+
 Easily embed stuff…
 
 h2. Table of contents
