@@ -4,7 +4,7 @@ $plugin['name'] = 'oui_embed';
 
 $plugin['allow_html_help'] = 0;
 
-$plugin['version'] = '0.1.0';
+$plugin['version'] = '0.1.1';
 $plugin['author'] = 'Nicolas Morand';
 $plugin['author_uri'] = 'https://github.com/NicolasGraph';
 $plugin['description'] = 'Embed stuff';
@@ -104,7 +104,7 @@ if (class_exists('\Textpattern\Tag\Registry')) {
 
 function oui_embed($atts) {
 	global $txpcfg;
-    
+
     extract(lAtts(array(
         'url'       => '',
         'info'       => 'code',
@@ -118,9 +118,11 @@ function oui_embed($atts) {
 	include($path);
 
 	$embed = Embed::create($url);
-	$out = $embed->$info;  
-  
-	return ($wraptag) ? doTag($out, $wraptag, $class) : $out;;
+
+	$ratio = number_format($embed->aspectRatio).'%';
+	$out = $embed->$info;
+
+	return ($wraptag) ? doTag($out, $wraptag, $class) : '<div class="video" style="position: relative; width: 100%; padding-top:'.$ratio.'">'.$out.'</div>';
 }
 
 # --- END PLUGIN CODE ---
