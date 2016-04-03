@@ -39,6 +39,7 @@ h2. Table of contents
 * "Installation":#installation
 * "Tag":#tag
 * "Example":#example
+* "Styling":#styling
 * "Author":#author
 * "Licence":#licence
 
@@ -74,11 +75,31 @@ h5. Optional
 * @info="…"@ – _Default: code_ - The information to retrieve from the url feed. Valid values are _title, description, url, type, tags, images, image, imageWidth, imageHeight, code, width, height, aspectRatio, authorName, authorUrl, providerName, providerUrl, providerIcons, providerIcon, publishedDate_ ("More informations":https://github.com/oscarotero/Embed).
 * @label="…"@ – _Default: unset_ - The label used to entitled the generated content.
 * @labeltag="…"@ - _Default: unset_ - The HTML tag used around the value assigned to @label@.
+* @responsive="…"@ - _Default: unset_ - Uses a @div@ as wrapper and adds a @padding-top@ to it according to content ratio. You still need to "set the rest of the css rules":#styling.  
 * @wraptag="…"@ - _Default: ul_ - The HTML tag to use around the generated content.
 
 h2(#example). Example
 
 bc. <txp:oui_embed url="https://www.youtube.com/watch?v=PP1xn5wHtxE" />
+
+h2(#styling). Styling
+
+h3. Responsive use
+
+bc. <txp:oui_embed url="https://www.youtube.com/watch?v=PP1xn5wHtxE" responsive="1" />
+
+bc.. .oui_embed // or your wrap class // {
+	position: relative;
+	width: 100%;
+	
+	iframe { 
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+	}	
+}
 
 h2(#author). Author
 
@@ -106,23 +127,30 @@ function oui_embed($atts) {
 	global $txpcfg;
 
     extract(lAtts(array(
-        'url'       => '',
+        'url'        => '',
         'info'       => 'code',
-        'label'       => '',
-        'labeltag'    => '',
-        'wraptag'     => '',
-        'class'       => ''
+        'label'      => '',
+        'labeltag'   => '',
+        'wraptag'    => '',
+        'class'      => '',
+        'responsive' => ''
     ),$atts));
 
 	$path = $txpcfg['txpath'] . "/vendors/embed/src/autoloader.php";
 	include($path);
 
 	$embed = Embed::create($url);
+	$data = $embed->$info;
 
 	$ratio = number_format($embed->aspectRatio).'%';
-	$out = $embed->$info;
 
-	return ($wraptag) ? doTag($out, $wraptag, $class) : '<div class="video" style="position: relative; width: 100%; padding-top:'.$ratio.'">'.$out.'</div>';
+	if ($responsive) {
+		$out = '<div class="oui_embed '.$class.'" style="padding-top:'.$ratio.'">'.$data.'</div>';
+	} else {
+		$out = ($wraptag) ? doTag($data, $wraptag, $class) : $data;
+	};
+
+	return $out;
 }
 
 # --- END PLUGIN CODE ---
