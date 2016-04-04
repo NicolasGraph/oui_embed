@@ -4,7 +4,7 @@ $plugin['name'] = 'oui_embed';
 
 $plugin['allow_html_help'] = 0;
 
-$plugin['version'] = '0.1.1';
+$plugin['version'] = '0.1.2';
 $plugin['author'] = 'Nicolas Morand';
 $plugin['author_uri'] = 'https://github.com/NicolasGraph';
 $plugin['description'] = 'Embed stuff';
@@ -147,7 +147,7 @@ function oui_embed($atts) {
 
 	$ratio = number_format($embed->aspectRatio).'%';
 
-	if ($responsive) {
+	if ($info == 'code' && $responsive) {
 		$out = '<div class="oui_embed '.$class.'" style="padding-top:'.$ratio.'">'.$data.'</div>';
 	} else {
 		$out = ($wraptag) ? doTag($data, $wraptag, $class) : $data;
