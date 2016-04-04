@@ -4,7 +4,7 @@ $plugin['name'] = 'oui_embed';
 
 $plugin['allow_html_help'] = 0;
 
-$plugin['version'] = '0.1.2';
+$plugin['version'] = '0.2.0';
 $plugin['author'] = 'Nicolas Morand';
 $plugin['author_uri'] = 'https://github.com/NicolasGraph';
 $plugin['description'] = 'Embed stuff';
@@ -39,8 +39,8 @@ h2. Table of contents
 
 * "Plugin requirements":#requirements
 * "Installation":#installation
-* "Tag":#tag
-* "Example":#example
+* "Tags":#tags
+* "Examples":#examples
 * "Styling":#styling
 * "Author":#author
 * "Licence":#licence
@@ -57,11 +57,11 @@ h2(#installation). Installation
 # Download "Embed":https://github.com/oscarotero/Embed/releases by Oscar Otero, rename the src folder to embed and paste it in your *textpattern/vendors* folder;
 # paste the content of the plugin file under the *Admin > Plugins*, upload it and install.
 
-h2(#tag). Tag
+h2(#tags). Tags
 
 h3. oui_embed
 
-Single tag use to embed your stuff.
+Single or container tag use to embed your stuff.
 
 bc. <txp:oui_embed />
 
@@ -77,8 +77,16 @@ h5. Optional
 * @info="…"@ – _Default: code_ - The information to retrieve from the url feed. Valid values are _title, description, url, type, tags, images, image, imageWidth, imageHeight, code, width, height, aspectRatio, authorName, authorUrl, providerName, providerUrl, providerIcons, providerIcon, publishedDate_ ("More informations":https://github.com/oscarotero/Embed).
 * @label="…"@ – _Default: unset_ - The label used to entitled the generated content.
 * @labeltag="…"@ - _Default: unset_ - The HTML tag used around the value assigned to @label@.
-* @responsive="…"@ - _Default: unset_ - Uses a @div@ as wrapper and adds a @padding-top@ to it according to content ratio. You still need to "set the rest of the css rules":#styling.  
+* @responsive="…"@ - _Default: unset_ - Uses a @div@ as wrapper if the @info@ attribute value is _code_ and adds a @padding-top@ to it according to content ratio. You still need to "set the rest of the css rules":#styling.  
 * @wraptag="…"@ - _Default: ul_ - The HTML tag to use around the generated content.
+
+h3. oui_embed
+
+Single tag to use in a @oui_embed@ container tag.
+
+h4. Attributes 
+
+Same as @oui_embed@ optional attributes.
 
 h2(#example). Example
 
@@ -126,11 +134,12 @@ use Embed\Embed;
 if (class_exists('\Textpattern\Tag\Registry')) {
     // Register Textpattern tags for TXP 4.6+.
     Txp::get('\Textpattern\Tag\Registry')
-        ->register('oui_embed');
+        ->register('oui_embed')
+        ->register('oui_embed_data');
 }
 
-function oui_embed($atts) {
-	global $txpcfg;
+function oui_embed($atts, $thing=null) {
+	global $txpcfg, $embed;
 
     extract(lAtts(array(
         'url'        => '',
@@ -143,17 +152,49 @@ function oui_embed($atts) {
     ),$atts));
 
 	$embed = Embed::create($url);
+
+	if ($thing===null) {
+		$data = $embed->$info;
+	
+		$ratio = number_format($embed->aspectRatio).'%';
+	
+		if ($info == 'code' && $responsive) {
+			$out = (($label) ? doLabel($label, $labeltag) : '').'<div class="oui_embed '.$class.'" style="padding-top:'.$ratio.'">'.$data.'</div>';
+		} else {
+			$out = (($label) ? doLabel($label, $labeltag) : '').(($wraptag) ? doTag($data, $wraptag, $class) : $data);
+		};
+	
+	} else {
+		$out = $thing;
+	}
+	
+	return $out;
+
+}
+
+function oui_embed_data($atts) {
+	global $embed;
+
+    extract(lAtts(array(
+        'info'       => '',
+        'label'      => '',
+        'labeltag'   => '',
+        'wraptag'    => '',
+        'class'      => '',
+        'responsive' => ''
+    ),$atts));
+
 	$data = $embed->$info;
 
 	$ratio = number_format($embed->aspectRatio).'%';
 
 	if ($info == 'code' && $responsive) {
-		$out = '<div class="oui_embed '.$class.'" style="padding-top:'.$ratio.'">'.$data.'</div>';
+		$out = (($label) ? doLabel($label, $labeltag) : '').'<div class="oui_embed '.$class.'" style="padding-top:'.$ratio.'">'.$data.'</div>';
 	} else {
-		$out = ($wraptag) ? doTag($data, $wraptag, $class) : $data;
+		$out = (($label) ? doLabel($label, $labeltag) : '').(($wraptag) ? doTag($data, $wraptag, $class) : $data);
 	};
 
-	return $out;
+	return $out;	
 }
 
 # --- END PLUGIN CODE ---
