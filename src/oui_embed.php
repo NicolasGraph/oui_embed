@@ -67,7 +67,7 @@ h3(#oui_embed). oui_embed
 
 Single or container tag use to embed your stuff.
 
-bc. <txp:oui_embed />
+bc. <txp:oui_embed url="…" />
 
 h4. Attributes 
 
@@ -87,6 +87,8 @@ h5. Optional
 h3(#oui_embed). oui_embed_data
 
 Single tag to use in a @oui_embed@ container tag.
+
+bc. <txp:oui_embed url="…"><txp:oui_embed_data info="…"></txp:oui_embed>
 
 h4. Attributes 
 
