@@ -8,7 +8,7 @@ h2. Table of contents
 * "Installation":#installation
 * "Tags":#tags
 ** "oui_embed":#oui_embed
-** "oui_embed_data":#oui_embed_data
+** "oui_embed_info":#oui_embed_info
 * "Examples":#examples
 ** "Single tag use":#single
 ** "Conatiner tag use":#container
@@ -18,7 +18,7 @@ h2. Table of contents
 
 h2(#requirements). Plugin requirements
 
-oui_instagram’s minimum requirements:
+oui_embed’s minimum requirements:
 
 * Textpattern 4.5+
 * "Embed":https://github.com/oscarotero/Embed
@@ -44,32 +44,41 @@ h5. Required
 
 h5. Recommended
 
-* @cache_time="…"@ — _Default: 0_ - Duration of the cache in seconds.
+* @cache_time="…"@ — _Default: 0_ - Duration of the cache in seconds; during this time the result of the tags request will be stored in the Txp cache folder and read from there, avoiding too many external requests.
 
 h5. Optional
 
-* @class="…"@ – _Default: oui_instagram_images_ - The css class to apply to the HTML tag assigned to @wraptag@.
-* @info="…"@ – _Default: code_ - The information to retrieve from the url feed. Valid values are _title, description, url, type, tags, images, image, imageWidth, imageHeight, code, width, height, aspectRatio, authorName, authorUrl, providerName, providerUrl, providerIcons, providerIcon, publishedDate_ ("More informations":https://github.com/oscarotero/Embed).
+h6. Single tag use
+
+* @class="…"@ – _Default: unset_ - The css class to apply to the HTML tag assigned to @wraptag@.
+* @type="…"@ – _Default: code_ - The information to retrieve from the url feed. Valid values are _title, description, url, type, tags, images, image, imageWidth, imageHeight, code, width, height, aspectRatio, authorName, authorUrl, providerName, providerUrl, providerIcons, providerIcon, publishedDate_ ("More informations":https://github.com/oscarotero/Embed).
 * @label="…"@ – _Default: unset_ - The label used to entitled the generated content.
 * @labeltag="…"@ - _Default: unset_ - The HTML tag used around the value assigned to @label@.
 * @responsive="…"@ - _Default: unset_ - Uses a @div@ as wrapper if the @info@ attribute value is _code_ and adds a @padding-top@ to it according to content ratio. You still need to "set the rest of the css rules":#styling.  
 * @wraptag="…"@ - _Default: ul_ - The HTML tag to use around the generated content.
 
+h6. Container tag use
+
+* @class="…"@ – _Default: unset_ - The css class to apply to the HTML tag assigned to @wraptag@.
+* @label="…"@ – _Default: unset_ - The label used to entitled the generated content.
+* @labeltag="…"@ - _Default: unset_ - The HTML tag used around the value assigned to @label@.
+* @wraptag="…"@ - _Default: ul_ - The HTML tag to use around the generated content.
+
 h5. Special
 
-* @hash_key="…"@ - _Default: 195263_ - A number used to hash the 32-character reference assigned to your Instagram query and to generate a shorter key for your cache file (you shouldn't need to change that).
+* @hash_key="…"@ - _Default: 194820_ - A number used to hash the 32-character reference assigned to your query and to generate a key for your cache file (you shouldn't need to change that).
 
-h3(#oui_embed_data). oui_embed_data
+h3(#oui_embed_info). oui_embed_info
 
 Single tag to use in a @oui_embed@ container tag.
 
 bc. <txp:oui_embed url="…">
-    <txp:oui_embed_data info="…" />
+    <txp:oui_embed_info info="…" />
 </txp:oui_embed>
 
 h4. Attributes 
 
-Same as @oui_embed@ optional attributes.
+See @oui_embed@ optional attributes for single tag use.
 
 h2(#example). Example
 
@@ -80,8 +89,8 @@ bc. <txp:oui_embed url="https://youtu.be/PPjazi4mQSQ" />
 h3(#container). Container tag use
 
 bc.. <txp:oui_embed url="https://youtu.be/PPjazi4mQSQ">
-    <txp:oui_embed_data info="code" responsive="1" label="Video" labeltag="h1"   />
-    <txp:oui_embed_data info="title" label="Title" labeltag="h2"  />
+    <txp:oui_embed_info info="code" responsive="1" label="Video" labeltag="h1"   />
+    <txp:oui_embed_info info="title" label="Title" labeltag="h2"  />
 </txp:oui_embed>
 
 h2(#styling). Styling

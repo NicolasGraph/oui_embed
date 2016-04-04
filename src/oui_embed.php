@@ -4,7 +4,7 @@ $plugin['name'] = 'oui_embed';
 
 $plugin['allow_html_help'] = 0;
 
-$plugin['version'] = '0.3.0';
+$plugin['version'] = '0.3.1';
 $plugin['author'] = 'Nicolas Morand';
 $plugin['author_uri'] = 'https://github.com/NicolasGraph';
 $plugin['description'] = 'Embed everything';
@@ -39,7 +39,7 @@ h2. Table of contents
 * "Installation":#installation
 * "Tags":#tags
 ** "oui_embed":#oui_embed
-** "oui_embed_data":#oui_embed_data
+** "oui_embed_info":#oui_embed_info
 * "Examples":#examples
 ** "Single tag use":#single
 ** "Conatiner tag use":#container
@@ -49,7 +49,7 @@ h2. Table of contents
 
 h2(#requirements). Plugin requirements
 
-oui_instagram’s minimum requirements:
+oui_embed’s minimum requirements:
 
 * Textpattern 4.5+
 * "Embed":https://github.com/oscarotero/Embed
@@ -75,32 +75,41 @@ h5. Required
 
 h5. Recommended
 
-* @cache_time="…"@ — _Default: 0_ - Duration of the cache in seconds.
+* @cache_time="…"@ — _Default: 0_ - Duration of the cache in seconds; during this time the result of the tags request will be stored in the Txp cache folder and read from there, avoiding too many external requests.
 
 h5. Optional
 
-* @class="…"@ – _Default: oui_instagram_images_ - The css class to apply to the HTML tag assigned to @wraptag@.
-* @info="…"@ – _Default: code_ - The information to retrieve from the url feed. Valid values are _title, description, url, type, tags, images, image, imageWidth, imageHeight, code, width, height, aspectRatio, authorName, authorUrl, providerName, providerUrl, providerIcons, providerIcon, publishedDate_ ("More informations":https://github.com/oscarotero/Embed).
+h6. Single tag use
+
+* @class="…"@ – _Default: unset_ - The css class to apply to the HTML tag assigned to @wraptag@.
+* @type="…"@ – _Default: code_ - The information to retrieve from the url feed. Valid values are _title, description, url, type, tags, images, image, imageWidth, imageHeight, code, width, height, aspectRatio, authorName, authorUrl, providerName, providerUrl, providerIcons, providerIcon, publishedDate_ ("More informations":https://github.com/oscarotero/Embed).
 * @label="…"@ – _Default: unset_ - The label used to entitled the generated content.
 * @labeltag="…"@ - _Default: unset_ - The HTML tag used around the value assigned to @label@.
 * @responsive="…"@ - _Default: unset_ - Uses a @div@ as wrapper if the @info@ attribute value is _code_ and adds a @padding-top@ to it according to content ratio. You still need to "set the rest of the css rules":#styling.  
 * @wraptag="…"@ - _Default: ul_ - The HTML tag to use around the generated content.
 
+h6. Container tag use
+
+* @class="…"@ – _Default: unset_ - The css class to apply to the HTML tag assigned to @wraptag@.
+* @label="…"@ – _Default: unset_ - The label used to entitled the generated content.
+* @labeltag="…"@ - _Default: unset_ - The HTML tag used around the value assigned to @label@.
+* @wraptag="…"@ - _Default: ul_ - The HTML tag to use around the generated content.
+
 h5. Special
 
-* @hash_key="…"@ - _Default: 194820_ - A number used to hash the 32-character reference assigned to your Instagram query and to generate a shorter key for your cache file (you shouldn't need to change that).
+* @hash_key="…"@ - _Default: 194820_ - A number used to hash the 32-character reference assigned to your query and to generate a key for your cache file (you shouldn't need to change that).
 
-h3(#oui_embed_data). oui_embed_data
+h3(#oui_embed_info). oui_embed_info
 
 Single tag to use in a @oui_embed@ container tag.
 
 bc. <txp:oui_embed url="…">
-    <txp:oui_embed_data info="…" />
+    <txp:oui_embed_info info="…" />
 </txp:oui_embed>
 
 h4. Attributes 
 
-Same as @oui_embed@ optional attributes.
+See @oui_embed@ optional attributes for single tag use.
 
 h2(#example). Example
 
@@ -111,8 +120,8 @@ bc. <txp:oui_embed url="https://youtu.be/PPjazi4mQSQ" />
 h3(#container). Container tag use
 
 bc.. <txp:oui_embed url="https://youtu.be/PPjazi4mQSQ">
-    <txp:oui_embed_data info="code" responsive="1" label="Video" labeltag="h1"   />
-    <txp:oui_embed_data info="title" label="Title" labeltag="h2"  />
+    <txp:oui_embed_info info="code" responsive="1" label="Video" labeltag="h1"   />
+    <txp:oui_embed_info info="title" label="Title" labeltag="h2"  />
 </txp:oui_embed>
 
 h2(#styling). Styling
@@ -158,7 +167,7 @@ if (class_exists('\Textpattern\Tag\Registry')) {
     // Register Textpattern tags for TXP 4.6+.
     Txp::get('\Textpattern\Tag\Registry')
         ->register('oui_embed')
-        ->register('oui_embed_data');
+        ->register('oui_embed_info');
 }
 
 function oui_embed($atts, $thing=null) {
@@ -166,7 +175,7 @@ function oui_embed($atts, $thing=null) {
 
     extract(lAtts(array(
         'url'        => '',
-        'info'       => 'code',
+        'type'       => 'code',
         'label'      => '',
         'labeltag'   => '',
         'wraptag'    => '',
@@ -176,69 +185,77 @@ function oui_embed($atts, $thing=null) {
         'hash_key'   => '194820'
     ),$atts));
 
-    $keybase = md5($url.$info.$label.$labeltag.$wraptag.$class.$responsive.$thing);
+	// Prepare cache variables
+    $keybase = md5($url.$type.$label.$labeltag.$wraptag.$class.$responsive.$thing);
     $hash = str_split($hash_key);
-
     $cachekey='';
     foreach ($hash as $hashskip) {
         $cachekey .= $keybase[$hashskip];
     }
-
     $cachedate = get_pref('cacheset');
     $cachefile = find_temp_dir().DS.'oui_embed_data_'.$cachekey;
-    $cacheneeded = (($cache_time > 0) && (!file_exists($cachefile) || (time() - $cachedate) > $cache_time)) ? true : false;
+    $cacheexists = file_exists($cachefile) ? true : false;
 
-    if ($cacheneeded || ($cache_time == 0)) {
-        	
+	// Cache_time is set and cache file is missing, or cache file is outdated
+    $needcache = (($cache_time > 0) && ((!$cacheexists) || (time() - $cachedate) > $cache_time)) ? true : false;
+	$readcache = (($cache_time > 0) && ($cacheexists)) ? true : false;
+
+	// Cache_time is not set, or a new cache file is needed; throw a new request
+    if ($needcache || $cache_time == 0) {
+        
 	    $embed = Embed::create($url);
 	
-	    if ($thing===null) {
-	        $data = $embed->$info;
-	    
+		// Container tag use
+	    if ($thing === null) {
+
+	        $data = $embed->$type;
 	        $ratio = number_format($embed->aspectRatio, 2, '.', '').'%';
-	    
-	        if ($info == 'code' && $responsive) {
+
+	        if (($type === 'code') && $responsive) {
+	        	// Add padding-top if responsive attribute is set
 	            $out = (($label) ? doLabel($label, $labeltag) : '').'<div class="oui_embed '.$class.'" style="padding-top:'.$ratio.'">'.$data.'</div>';
 	        } else {
 	            $out = (($label) ? doLabel($label, $labeltag) : '').(($wraptag) ? doTag($data, $wraptag, $class) : $data);
 	        };
-	    
+
+	    // Single tag use
 	    } else {
-	        $out = parse($thing);
+	    	$data = parse($thing);
+	        $out = (($label) ? doLabel($label, $labeltag) : '').(($wraptag) ? doTag($data, $wraptag, $class) : $data);
 	    }
-
-		if ($cacheneeded) {
-
-		    $oldcaches = glob($cachefile);
-		    if (!empty($oldcaches)) {
-		        foreach($oldcaches as $todel) {
-		            unlink($todel);
-		        }
-		    }
-	
-	        set_pref('cacheset', time(), 'oui_embed', PREF_HIDDEN, 'text_input'); 
-	        $rh = fopen($cachefile,'w+');
-	        fwrite($rh,$out);
-	        fclose($rh);
-    	}
     }
+    
+   	// Cache file is needed
+	if ($needcache) {
+		// Remove old cache files
+	    $oldcaches = glob($cachefile);
+	    if (!empty($oldcaches)) {
+	        foreach($oldcaches as $todel) {
+	            unlink($todel);
+	        }
+	    }
+		// Time stamp and write the new cache files and return
+        set_pref('cacheset', time(), 'oui_embed', PREF_HIDDEN, 'text_input'); 
+        $rh = fopen($cachefile,'w+');
+        fwrite($rh,$out);
+        fclose($rh);
+   	}
 
-	if ($cache_time > 0) {    
-    	
+	// Cache is on and file is found, get it!
+	if ($readcache) {        	
     	$cache_out = file_get_contents($cachefile);
     	return $cache_out;
-	        
-    } else {	
-    	
+	// No cache file :(       
+    } else {	    	
     	return $out;
     }
 }
 
-function oui_embed_data($atts) {
+function oui_embed_info($atts) {
     global $embed;
 
     extract(lAtts(array(
-        'info'       => '',
+        'type'       => '',
         'label'      => '',
         'labeltag'   => '',
         'wraptag'    => '',
@@ -246,11 +263,11 @@ function oui_embed_data($atts) {
         'responsive' => ''
     ),$atts));
 
-    $data = $embed->$info;
-
+    $data = $embed->$type;	
     $ratio = number_format($embed->aspectRatio, 2, '.', '').'%';
 
-    if ($info == 'code' && $responsive) {
+    if (($type === 'code') && $responsive) {
+    	// Add padding-top if responsive attribute is set
         $out = (($label) ? doLabel($label, $labeltag) : '').'<div class="oui_embed '.$class.'" style="padding-top:'.$ratio.'">'.$data.'</div>';
     } else {
         $out = (($label) ? doLabel($label, $labeltag) : '').(($wraptag) ? doTag($data, $wraptag, $class) : $data);
