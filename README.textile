@@ -1,7 +1,5 @@
 h1. oui_embed
 
-*! In process; this plugin is not released yet…*
-
 "Embed":https://github.com/oscarotero/Embed everything…
 
 h2. Table of contents
@@ -44,6 +42,10 @@ h5. Required
 
 * @url="…"@ - _Default: unset_ - The url from which you want to get any information.
 
+h5. Recommended
+
+* @cache_time="…"@ — _Default: 0_ - Duration of the cache in seconds.
+
 h5. Optional
 
 * @class="…"@ – _Default: oui_instagram_images_ - The css class to apply to the HTML tag assigned to @wraptag@.
@@ -53,11 +55,15 @@ h5. Optional
 * @responsive="…"@ - _Default: unset_ - Uses a @div@ as wrapper if the @info@ attribute value is _code_ and adds a @padding-top@ to it according to content ratio. You still need to "set the rest of the css rules":#styling.  
 * @wraptag="…"@ - _Default: ul_ - The HTML tag to use around the generated content.
 
+h5. Special
+
+* @hash_key="…"@ - _Default: 195263_ - A number used to hash the 32-character reference assigned to your Instagram query and to generate a shorter key for your cache file (you shouldn't need to change that).
+
 h3(#oui_embed_data). oui_embed_data
 
 Single tag to use in a @oui_embed@ container tag.
 
-bc.. <txp:oui_embed url="…">
+bc. <txp:oui_embed url="…">
     <txp:oui_embed_data info="…" />
 </txp:oui_embed>
 

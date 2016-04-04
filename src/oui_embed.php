@@ -4,7 +4,7 @@ $plugin['name'] = 'oui_embed';
 
 $plugin['allow_html_help'] = 0;
 
-$plugin['version'] = '0.2.1';
+$plugin['version'] = '0.3.0';
 $plugin['author'] = 'Nicolas Morand';
 $plugin['author_uri'] = 'https://github.com/NicolasGraph';
 $plugin['description'] = 'Embed everything';
@@ -73,6 +73,10 @@ h5. Required
 
 * @url="…"@ - _Default: unset_ - The url from which you want to get any information.
 
+h5. Recommended
+
+* @cache_time="…"@ — _Default: 0_ - Duration of the cache in seconds.
+
 h5. Optional
 
 * @class="…"@ – _Default: oui_instagram_images_ - The css class to apply to the HTML tag assigned to @wraptag@.
@@ -81,6 +85,10 @@ h5. Optional
 * @labeltag="…"@ - _Default: unset_ - The HTML tag used around the value assigned to @label@.
 * @responsive="…"@ - _Default: unset_ - Uses a @div@ as wrapper if the @info@ attribute value is _code_ and adds a @padding-top@ to it according to content ratio. You still need to "set the rest of the css rules":#styling.  
 * @wraptag="…"@ - _Default: ul_ - The HTML tag to use around the generated content.
+
+h5. Special
+
+* @hash_key="…"@ - _Default: 195263_ - A number used to hash the 32-character reference assigned to your Instagram query and to generate a shorter key for your cache file (you shouldn't need to change that).
 
 h3(#oui_embed_data). oui_embed_data
 
@@ -163,27 +171,66 @@ function oui_embed($atts, $thing=null) {
         'labeltag'   => '',
         'wraptag'    => '',
         'class'      => '',
-        'responsive' => ''
+        'responsive' => '',
+        'cache_time' => '0',
+        'hash_key'   => '199820'
     ),$atts));
 
-    $embed = Embed::create($url);
+    $keybase = md5($url.$info.$thing);
+    $hash = str_split($hash_key);
 
-    if ($thing===null) {
-        $data = $embed->$info;
-    
-        $ratio = number_format($embed->aspectRatio, 2, '.', '').'%';
-    
-        if ($info == 'code' && $responsive) {
-            $out = (($label) ? doLabel($label, $labeltag) : '').'<div class="oui_embed '.$class.'" style="padding-top:'.$ratio.'">'.$data.'</div>';
-        } else {
-            $out = (($label) ? doLabel($label, $labeltag) : '').(($wraptag) ? doTag($data, $wraptag, $class) : $data);
-        };
-    
-    } else {
-        $out = $thing;
+    $cachekey='';
+    foreach ($hash as $hashskip) {
+        $cachekey .= $keybase[$hashskip];
     }
-    
-    return $out;
+
+    $cachedate = get_pref('cacheset');
+    $cachefile = find_temp_dir().DS.'oui_embed_data_'.$cachekey;
+
+    if(($cache_time == 0) || (($cache_time > 0) && (!file_exists($cachefile) || (time() - $cachedate) > $cache_time))) {
+        	
+	    $embed = Embed::create($url);
+	
+	    if ($thing===null) {
+	        $data = $embed->$info;
+	    
+	        $ratio = number_format($embed->aspectRatio, 2, '.', '').'%';
+	    
+	        if ($info == 'code' && $responsive) {
+	            $out = (($label) ? doLabel($label, $labeltag) : '').'<div class="oui_embed '.$class.'" style="padding-top:'.$ratio.'">'.$data.'</div>';
+	        } else {
+	            $out = (($label) ? doLabel($label, $labeltag) : '').(($wraptag) ? doTag($data, $wraptag, $class) : $data);
+	        };
+	    
+	    } else {
+	        $out = parse($thing);
+	    }
+
+		if ($cache_time > 0) {
+
+		    $oldcaches = glob($cachefile);
+		    if (!empty($oldcaches)) {
+		        foreach($oldcaches as $todel) {
+		            unlink($todel);
+		        }
+		    }
+	
+	        set_pref('cacheset', time(), 'oui_embed', PREF_HIDDEN, 'text_input'); 
+	        $rh = fopen($cachefile,'w+');
+	        fwrite($rh,$out);
+	        fclose($rh);
+    	}
+    }
+
+	if ($cache_time > 0) {    
+    	
+    	$cache_out = file_get_contents($cachefile);
+    	return $cache_out;
+	        
+    } else {	
+    	
+    	return $out;
+    }
 }
 
 function oui_embed_data($atts) {
