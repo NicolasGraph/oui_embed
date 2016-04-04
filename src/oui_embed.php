@@ -88,7 +88,7 @@ h3(#oui_embed). oui_embed_data
 
 Single tag to use in a @oui_embed@ container tag.
 
-bc. <txp:oui_embed url="…"><txp:oui_embed_data info="…"></txp:oui_embed>
+bc. <txp:oui_embed url="…"><txp:oui_embed_data info="…" /></txp:oui_embed>
 
 h4. Attributes 
 
@@ -103,8 +103,8 @@ bc. <txp:oui_embed url="https://youtu.be/PPjazi4mQSQ" />
 h3(#container). Container tag use
 
 bc.. <txp:oui_embed url="https://youtu.be/PPjazi4mQSQ">
-	<txp:oui_embed_data info="code" responsive="1" label="Video" labeltag="h1"   />
-	<txp:oui_embed_data info="title" label="Title" labeltag="h2"  />
+    <txp:oui_embed_data info="code" responsive="1" label="Video" labeltag="h1"   />
+    <txp:oui_embed_data info="title" label="Title" labeltag="h2"  />
 </txp:oui_embed>
 
 h2(#styling). Styling
@@ -118,16 +118,16 @@ bc. <txp:oui_embed url="https://www.youtube.com/watch?v=PP1xn5wHtxE" responsive=
 …and add the following css rules to your stylesheet.
 
 bc.. .oui_embed // or your wrap class // {
-	position: relative;
-	width: 100%;
-	
-	iframe { 
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-	}	
+    position: relative;
+    width: 100%;
+    
+    iframe { 
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
 }
 
 h2(#author). Author
@@ -154,7 +154,7 @@ if (class_exists('\Textpattern\Tag\Registry')) {
 }
 
 function oui_embed($atts, $thing=null) {
-	global $txpcfg, $embed;
+    global $txpcfg, $embed;
 
     extract(lAtts(array(
         'url'        => '',
@@ -166,29 +166,28 @@ function oui_embed($atts, $thing=null) {
         'responsive' => ''
     ),$atts));
 
-	$embed = Embed::create($url);
+    $embed = Embed::create($url);
 
-	if ($thing===null) {
-		$data = $embed->$info;
-	
-		$ratio = number_format($embed->aspectRatio).'%';
-	
-		if ($info == 'code' && $responsive) {
-			$out = (($label) ? doLabel($label, $labeltag) : '').'<div class="oui_embed '.$class.'" style="padding-top:'.$ratio.'">'.$data.'</div>';
-		} else {
-			$out = (($label) ? doLabel($label, $labeltag) : '').(($wraptag) ? doTag($data, $wraptag, $class) : $data);
-		};
-	
-	} else {
-		$out = $thing;
-	}
-	
-	return $out;
-
+    if ($thing===null) {
+        $data = $embed->$info;
+    
+        $ratio = number_format($embed->aspectRatio).'%';
+    
+        if ($info == 'code' && $responsive) {
+            $out = (($label) ? doLabel($label, $labeltag) : '').'<div class="oui_embed '.$class.'" style="padding-top:'.$ratio.'">'.$data.'</div>';
+        } else {
+            $out = (($label) ? doLabel($label, $labeltag) : '').(($wraptag) ? doTag($data, $wraptag, $class) : $data);
+        };
+    
+    } else {
+        $out = $thing;
+    }
+    
+    return $out;
 }
 
 function oui_embed_data($atts) {
-	global $embed;
+    global $embed;
 
     extract(lAtts(array(
         'info'       => '',
@@ -199,17 +198,17 @@ function oui_embed_data($atts) {
         'responsive' => ''
     ),$atts));
 
-	$data = $embed->$info;
+    $data = $embed->$info;
 
-	$ratio = number_format($embed->aspectRatio).'%';
+    $ratio = number_format($embed->aspectRatio).'%';
 
-	if ($info == 'code' && $responsive) {
-		$out = (($label) ? doLabel($label, $labeltag) : '').'<div class="oui_embed '.$class.'" style="padding-top:'.$ratio.'">'.$data.'</div>';
-	} else {
-		$out = (($label) ? doLabel($label, $labeltag) : '').(($wraptag) ? doTag($data, $wraptag, $class) : $data);
-	};
+    if ($info == 'code' && $responsive) {
+        $out = (($label) ? doLabel($label, $labeltag) : '').'<div class="oui_embed '.$class.'" style="padding-top:'.$ratio.'">'.$data.'</div>';
+    } else {
+        $out = (($label) ? doLabel($label, $labeltag) : '').(($wraptag) ? doTag($data, $wraptag, $class) : $data);
+    };
 
-	return $out;	
+    return $out;
 }
 
 # --- END PLUGIN CODE ---

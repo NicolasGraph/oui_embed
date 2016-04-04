@@ -57,7 +57,7 @@ h3(#oui_embed). oui_embed_data
 
 Single tag to use in a @oui_embed@ container tag.
 
-bc. <txp:oui_embed url="…"><txp:oui_embed_data info="…"></txp:oui_embed>
+bc. <txp:oui_embed url="…"><txp:oui_embed_data info="…" /></txp:oui_embed>
 
 h4. Attributes 
 
@@ -72,8 +72,8 @@ bc. <txp:oui_embed url="https://youtu.be/PPjazi4mQSQ" />
 h3(#container). Container tag use
 
 bc.. <txp:oui_embed url="https://youtu.be/PPjazi4mQSQ">
-	<txp:oui_embed_data info="code" responsive="1" label="Video" labeltag="h1"   />
-	<txp:oui_embed_data info="title" label="Title" labeltag="h2"  />
+    <txp:oui_embed_data info="code" responsive="1" label="Video" labeltag="h1"   />
+    <txp:oui_embed_data info="title" label="Title" labeltag="h2"  />
 </txp:oui_embed>
 
 h2(#styling). Styling
@@ -87,16 +87,16 @@ bc. <txp:oui_embed url="https://www.youtube.com/watch?v=PP1xn5wHtxE" responsive=
 …and add the following css rules to your stylesheet.
 
 bc.. .oui_embed // or your wrap class // {
-	position: relative;
-	width: 100%;
-	
-	iframe { 
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-	}	
+    position: relative;
+    width: 100%;
+    
+    iframe { 
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
 }
 
 h2(#author). Author
