@@ -4,7 +4,7 @@ $plugin['name'] = 'oui_embed';
 
 $plugin['allow_html_help'] = 0;
 
-$plugin['version'] = '0.2.0';
+$plugin['version'] = '0.2.1';
 $plugin['author'] = 'Nicolas Morand';
 $plugin['author_uri'] = 'https://github.com/NicolasGraph';
 $plugin['description'] = 'Embed everything';
@@ -33,7 +33,7 @@ h1. oui_embed
 
 *! In process; this plugin is not released yet…*
 
-Easily embed stuff…
+"Embed":https://github.com/oscarotero/Embed everything…
 
 h2. Table of contents
 
@@ -58,7 +58,7 @@ oui_instagram’s minimum requirements:
 
 h2(#installation). Installation
 
-# Download "Embed":https://github.com/oscarotero/Embed/releases by Oscar Otero, rename the src folder to embed and paste it in your *textpattern/vendors* folder;
+# Download "Embed":https://github.com/oscarotero/Embed/releases by Oscar Otero, rename the _src_ folder to _embed_ and paste it in your *textpattern/vendors* folder;
 # paste the content of the plugin file under the *Admin > Plugins*, upload it and install.
 
 h2(#tags). Tags
@@ -84,11 +84,13 @@ h5. Optional
 * @responsive="…"@ - _Default: unset_ - Uses a @div@ as wrapper if the @info@ attribute value is _code_ and adds a @padding-top@ to it according to content ratio. You still need to "set the rest of the css rules":#styling.  
 * @wraptag="…"@ - _Default: ul_ - The HTML tag to use around the generated content.
 
-h3(#oui_embed). oui_embed_data
+h3(#oui_embed_data). oui_embed_data
 
 Single tag to use in a @oui_embed@ container tag.
 
-bc. <txp:oui_embed url="…"><txp:oui_embed_data info="…" /></txp:oui_embed>
+bc. <txp:oui_embed url="…">
+    <txp:oui_embed_data info="…" />
+</txp:oui_embed>
 
 h4. Attributes 
 
@@ -154,7 +156,7 @@ if (class_exists('\Textpattern\Tag\Registry')) {
 }
 
 function oui_embed($atts, $thing=null) {
-    global $txpcfg, $embed;
+    global $embed;
 
     extract(lAtts(array(
         'url'        => '',
@@ -171,7 +173,7 @@ function oui_embed($atts, $thing=null) {
     if ($thing===null) {
         $data = $embed->$info;
     
-        $ratio = number_format($embed->aspectRatio).'%';
+        $ratio = number_format($embed->aspectRatio, 2, '.', '').'%';
     
         if ($info == 'code' && $responsive) {
             $out = (($label) ? doLabel($label, $labeltag) : '').'<div class="oui_embed '.$class.'" style="padding-top:'.$ratio.'">'.$data.'</div>';
@@ -200,7 +202,7 @@ function oui_embed_data($atts) {
 
     $data = $embed->$info;
 
-    $ratio = number_format($embed->aspectRatio).'%';
+    $ratio = number_format($embed->aspectRatio, 2, '.', '').'%';
 
     if ($info == 'code' && $responsive) {
         $out = (($label) ? doLabel($label, $labeltag) : '').'<div class="oui_embed '.$class.'" style="padding-top:'.$ratio.'">'.$data.'</div>';
