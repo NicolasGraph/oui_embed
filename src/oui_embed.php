@@ -7,7 +7,7 @@ $plugin['allow_html_help'] = 0;
 $plugin['version'] = '0.2.0';
 $plugin['author'] = 'Nicolas Morand';
 $plugin['author_uri'] = 'https://github.com/NicolasGraph';
-$plugin['description'] = 'Embed stuff';
+$plugin['description'] = 'Embed everything';
 
 $plugin['order'] = 5;
 
@@ -40,7 +40,11 @@ h2. Table of contents
 * "Plugin requirements":#requirements
 * "Installation":#installation
 * "Tags":#tags
+** "oui_embed":#oui_embed
+** "oui_embed_data":#oui_embed_data
 * "Examples":#examples
+** "Single tag use":#single
+** "Conatiner tag use":#container
 * "Styling":#styling
 * "Author":#author
 * "Licence":#licence
@@ -59,7 +63,7 @@ h2(#installation). Installation
 
 h2(#tags). Tags
 
-h3. oui_embed
+h3(#oui_embed). oui_embed
 
 Single or container tag use to embed your stuff.
 
@@ -80,7 +84,7 @@ h5. Optional
 * @responsive="…"@ - _Default: unset_ - Uses a @div@ as wrapper if the @info@ attribute value is _code_ and adds a @padding-top@ to it according to content ratio. You still need to "set the rest of the css rules":#styling.  
 * @wraptag="…"@ - _Default: ul_ - The HTML tag to use around the generated content.
 
-h3. oui_embed
+h3(#oui_embed). oui_embed_data
 
 Single tag to use in a @oui_embed@ container tag.
 
@@ -90,7 +94,16 @@ Same as @oui_embed@ optional attributes.
 
 h2(#example). Example
 
-bc. <txp:oui_embed url="https://www.youtube.com/watch?v=PP1xn5wHtxE" />
+h3(#single). Single tag use
+
+bc. <txp:oui_embed url="https://youtu.be/PPjazi4mQSQ" />
+
+h3(#container). Container tag use
+
+<txp:oui_embed url="https://youtu.be/PPjazi4mQSQ">
+	<txp:oui_embed_data info="code" responsive="1" label="Video" labeltag="h1"   />
+	<txp:oui_embed_data info="title" label="Title" labeltag="h2"  />
+</txp:oui_embed>
 
 h2(#styling). Styling
 

@@ -8,8 +8,12 @@ h2. Table of contents
 
 * "Plugin requirements":#requirements
 * "Installation":#installation
-* "Tag":#tag
-* "Example":#example
+* "Tags":#tags
+** "oui_embed":#oui_embed
+** "oui_embed_data":#oui_embed_data
+* "Examples":#examples
+** "Single tag use":#single
+** "Conatiner tag use":#container
 * "Styling":#styling
 * "Author":#author
 * "Licence":#licence
@@ -26,11 +30,11 @@ h2(#installation). Installation
 # Download "Embed":https://github.com/oscarotero/Embed/releases by Oscar Otero, rename the src folder to embed and paste it in your *textpattern/vendors* folder;
 # paste the content of the plugin file under the *Admin > Plugins*, upload it and install.
 
-h2(#tag). Tag
+h2(#tags). Tags
 
-h3. oui_embed
+h3(#oui_embed). oui_embed
 
-Single tag use to embed your stuff.
+Single or container tag use to embed your stuff.
 
 bc. <txp:oui_embed />
 
@@ -46,12 +50,29 @@ h5. Optional
 * @info="…"@ – _Default: code_ - The information to retrieve from the url feed. Valid values are _title, description, url, type, tags, images, image, imageWidth, imageHeight, code, width, height, aspectRatio, authorName, authorUrl, providerName, providerUrl, providerIcons, providerIcon, publishedDate_ ("More informations":https://github.com/oscarotero/Embed).
 * @label="…"@ – _Default: unset_ - The label used to entitled the generated content.
 * @labeltag="…"@ - _Default: unset_ - The HTML tag used around the value assigned to @label@.
-* @responsive="…"@ - _Default: unset_ - Uses a @div@ as wrapper and adds a @padding-top@ to it according to content ratio. You still need to "set the rest of the css rules":#styling.  
+* @responsive="…"@ - _Default: unset_ - Uses a @div@ as wrapper if the @info@ attribute value is _code_ and adds a @padding-top@ to it according to content ratio. You still need to "set the rest of the css rules":#styling.  
 * @wraptag="…"@ - _Default: ul_ - The HTML tag to use around the generated content.
+
+h3(#oui_embed). oui_embed_data
+
+Single tag to use in a @oui_embed@ container tag.
+
+h4. Attributes 
+
+Same as @oui_embed@ optional attributes.
 
 h2(#example). Example
 
-bc. <txp:oui_embed url="https://www.youtube.com/watch?v=PP1xn5wHtxE" />
+h3(#single). Single tag use
+
+bc. <txp:oui_embed url="https://youtu.be/PPjazi4mQSQ" />
+
+h3(#container). Container tag use
+
+<txp:oui_embed url="https://youtu.be/PPjazi4mQSQ">
+	<txp:oui_embed_data info="code" responsive="1" label="Video" labeltag="h1"   />
+	<txp:oui_embed_data info="title" label="Title" labeltag="h2"  />
+</txp:oui_embed>
 
 h2(#styling). Styling
 
