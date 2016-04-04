@@ -142,9 +142,6 @@ function oui_embed($atts) {
         'responsive' => ''
     ),$atts));
 
-	$path = $txpcfg['txpath'] . "/vendors/embed/src/autoloader.php";
-	include($path);
-
 	$embed = Embed::create($url);
 	$data = $embed->$info;
 
