@@ -31,8 +31,6 @@ if (0) {
 # --- BEGIN PLUGIN HELP ---
 h1. oui_embed
 
-*! In process; this plugin is not released yet…*
-
 "Embed":https://github.com/oscarotero/Embed everything…
 
 h2. Table of contents
