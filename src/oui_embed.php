@@ -88,7 +88,7 @@ h5. Optional
 
 h5. Special
 
-* @hash_key="…"@ - _Default: 195263_ - A number used to hash the 32-character reference assigned to your Instagram query and to generate a shorter key for your cache file (you shouldn't need to change that).
+* @hash_key="…"@ - _Default: 194820_ - A number used to hash the 32-character reference assigned to your Instagram query and to generate a shorter key for your cache file (you shouldn't need to change that).
 
 h3(#oui_embed_data). oui_embed_data
 
@@ -173,7 +173,7 @@ function oui_embed($atts, $thing=null) {
         'class'      => '',
         'responsive' => '',
         'cache_time' => '0',
-        'hash_key'   => '199820'
+        'hash_key'   => '194820'
     ),$atts));
 
     $keybase = md5($url.$info.$thing);
@@ -186,8 +186,9 @@ function oui_embed($atts, $thing=null) {
 
     $cachedate = get_pref('cacheset');
     $cachefile = find_temp_dir().DS.'oui_embed_data_'.$cachekey;
+    $cacheneeded = (($cache_time > 0) && (!file_exists($cachefile) || (time() - $cachedate) > $cache_time)) ? true : false;
 
-    if(($cache_time == 0) || (($cache_time > 0) && (!file_exists($cachefile) || (time() - $cachedate) > $cache_time))) {
+    if ($cacheneeded || ($cache_time == 0)) {
         	
 	    $embed = Embed::create($url);
 	
@@ -206,7 +207,7 @@ function oui_embed($atts, $thing=null) {
 	        $out = parse($thing);
 	    }
 
-		if ($cache_time > 0) {
+		if ($cacheneeded) {
 
 		    $oldcaches = glob($cachefile);
 		    if (!empty($oldcaches)) {
