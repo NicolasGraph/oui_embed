@@ -176,7 +176,7 @@ function oui_embed($atts, $thing=null) {
         'hash_key'   => '194820'
     ),$atts));
 
-    $keybase = md5($url.$info.$thing);
+    $keybase = md5($url.$info.$label.$labeltag.$wraptag.$class.$responsive.$thing);
     $hash = str_split($hash_key);
 
     $cachekey='';
