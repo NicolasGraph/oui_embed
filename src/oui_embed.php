@@ -33,6 +33,8 @@ h1. oui_embed
 
 "Embed":https://github.com/oscarotero/Embed everything…
 
+_Get information from any web page (using oembed, opengraph, twitter-cards, scrapping the html, etc). It's compatible with any web service (youtube, vimeo, flickr, instagram, etc) and has adapters to some sites like (archive.org, github, facebook, etc)._
+
 h2. Table of contents
 
 * "Plugin requirements":#requirements
@@ -85,7 +87,7 @@ h6. Single tag use
 * @type="…"@ – _Default: code_ - The information to retrieve from the url feed. Valid values are _title, description, url, type, tags, images, image, imageWidth, imageHeight, code, width, height, aspectRatio, authorName, authorUrl, providerName, providerUrl, providerIcons, providerIcon, publishedDate_ ("More informations":https://github.com/oscarotero/Embed).
 * @label="…"@ – _Default: unset_ - The label used to entitled the generated content.
 * @labeltag="…"@ - _Default: unset_ - The HTML tag used around the value assigned to @label@.
-* @responsive="…"@ - _Default: unset_ - Uses a @div@ as wrapper if the @info@ attribute value is _code_ and adds a @padding-top@ to it according to content ratio. You still need to "set the rest of the css rules":#styling.  
+* @responsive="…"@ - _Default: unset_ - Uses a @div@ as wrapper if the @info@ attribute value is _code_ and adds a @padding-top@ to it according to content ratio. You still need to "set the rest of the css rules":#styling. Useful for video embed.  
 * @wraptag="…"@ - _Default: ul_ - The HTML tag to use around the generated content.
 
 h6. Container tag use
@@ -115,14 +117,30 @@ h2(#example). Example
 
 h3(#single). Single tag use
 
-bc. <txp:oui_embed url="https://youtu.be/PPjazi4mQSQ" />
+bc. <txp:oui_embed url="https://youtu.be/aVARdqevPfI" />
+
+returns: 
+
+bc. <iframe width="480" height="270" src="https://www.youtube.com/embed/aVARdqevPfI?feature=oembed" frameborder="0" allowfullscreen></iframe>
 
 h3(#container). Container tag use
 
-bc.. <txp:oui_embed url="https://youtu.be/PPjazi4mQSQ">
-    <txp:oui_embed_info info="code" responsive="1" label="Video" labeltag="h1"   />
-    <txp:oui_embed_info info="title" label="Title" labeltag="h2"  />
+bc.. <txp:oui_embed url="https://vimeo.com/157562955" label="Embed" labeltag="h1">
+    <txp:oui_embed_info type="code" responsive="1" label="Video" labeltag="h2"   />
+    <txp:oui_embed_info type="title" label="Title" labeltag="h2" wraptag="p" />
 </txp:oui_embed>
+
+p. returns:
+
+bc.. <h1>Embed</h1>
+
+<h2>Video</h2>
+<div class="oui_embed " style="padding-top:56.25%">
+    <iframe src="https://player.vimeo.com/video/157562955" width="1920" height="1080" frameborder="0" title="The Uses of Envy" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+</div>
+
+<h2>Title</h2>
+<p>The Uses of Envy</p>
 
 h2(#styling). Styling
 
@@ -130,7 +148,7 @@ h3. Responsive use
 
 To make your embed content fit the width of its container and keep its ratio, use the @responsive@ attribute…
 
-bc. <txp:oui_embed url="https://www.youtube.com/watch?v=PP1xn5wHtxE" responsive="1" />
+bc. <txp:oui_embed url="…" responsive="1" />
 
 …and add the following css rules to your stylesheet.
 
@@ -185,7 +203,7 @@ function oui_embed($atts, $thing=null) {
         'hash_key'   => '194820'
     ),$atts));
 
-	// Prepare cache variables
+    // Prepare cache variables
     $keybase = md5($url.$type.$label.$labeltag.$wraptag.$class.$responsive.$thing);
     $hash = str_split($hash_key);
     $cachekey='';
@@ -196,58 +214,62 @@ function oui_embed($atts, $thing=null) {
     $cachefile = find_temp_dir().DS.'oui_embed_data_'.$cachekey;
     $cacheexists = file_exists($cachefile) ? true : false;
 
-	// Cache_time is set and cache file is missing, or cache file is outdated
     $needcache = (($cache_time > 0) && ((!$cacheexists) || (time() - $cachedate) > $cache_time)) ? true : false;
-	$readcache = (($cache_time > 0) && ($cacheexists)) ? true : false;
+    $readcache = (($cache_time > 0) && ($cacheexists)) ? true : false;
 
-	// Cache_time is not set, or a new cache file is needed; throw a new request
+    // Cache_time is not set, or a new cache file is needed; throw a new request
     if ($needcache || $cache_time == 0) {
         
-	    $embed = Embed::create($url);
-	
-		// Container tag use
-	    if ($thing === null) {
+        $embed = Embed::create($url);
+    
+        // Container tag use
+        if ($thing === null) {
 
-	        $data = $embed->$type;
-	        $ratio = number_format($embed->aspectRatio, 2, '.', '').'%';
+            $data = $embed->$type;
 
-	        if (($type === 'code') && $responsive) {
-	        	// Add padding-top if responsive attribute is set
-	            $out = (($label) ? doLabel($label, $labeltag) : '').'<div class="oui_embed '.$class.'" style="padding-top:'.$ratio.'">'.$data.'</div>';
-	        } else {
-	            $out = (($label) ? doLabel($label, $labeltag) : '').(($wraptag) ? doTag($data, $wraptag, $class) : $data);
-	        };
+            if (($type === 'code') && $responsive) {
+                // Add padding-top if responsive attribute is set
+                $ratio = number_format($embed->aspectRatio, 2, '.', '').'%';
+                $out = (($label) ? doLabel($label, $labeltag) : '').\n
+                      .'<div class="oui_embed '.$class.'" style="padding-top:'.$ratio.'">'.\n
+                      .'    '.$data.\n
+                      .'</div>'.\n;
+            } else {
+                $out = (($label) ? doLabel($label, $labeltag) : '').\n
+                      .(($wraptag) ? doTag($data, $wraptag, $class) : $data);
+            };
 
-	    // Single tag use
-	    } else {
-	    	$data = parse($thing);
-	        $out = (($label) ? doLabel($label, $labeltag) : '').(($wraptag) ? doTag($data, $wraptag, $class) : $data);
-	    }
+        // Single tag use
+        } else {
+            $data = parse($thing);
+            $out = (($label) ? doLabel($label, $labeltag) : '').\n
+                  .(($wraptag) ? doTag($data, $wraptag, $class) : $data);
+        }
     }
     
-   	// Cache file is needed
-	if ($needcache) {
-		// Remove old cache files
-	    $oldcaches = glob($cachefile);
-	    if (!empty($oldcaches)) {
-	        foreach($oldcaches as $todel) {
-	            unlink($todel);
-	        }
-	    }
-		// Time stamp and write the new cache files and return
+    // Cache file is needed
+    if ($needcache) {
+        // Remove old cache files
+        $oldcaches = glob($cachefile);
+        if (!empty($oldcaches)) {
+            foreach($oldcaches as $todel) {
+                unlink($todel);
+            }
+        }
+        // Time stamp and write the new cache files and return
         set_pref('cacheset', time(), 'oui_embed', PREF_HIDDEN, 'text_input'); 
         $rh = fopen($cachefile,'w+');
         fwrite($rh,$out);
         fclose($rh);
-   	}
+    }
 
-	// Cache is on and file is found, get it!
-	if ($readcache) {        	
-    	$cache_out = file_get_contents($cachefile);
-    	return $cache_out;
-	// No cache file :(       
-    } else {	    	
-    	return $out;
+    // Cache is on and file is found, get it!
+    if ($readcache) {            
+        $cache_out = file_get_contents($cachefile);
+        return $cache_out;
+    // No cache file :(       
+    } else {            
+        return $out;
     }
 }
 
@@ -263,14 +285,18 @@ function oui_embed_info($atts) {
         'responsive' => ''
     ),$atts));
 
-    $data = $embed->$type;	
-    $ratio = number_format($embed->aspectRatio, 2, '.', '').'%';
+    $data = $embed->$type;    
 
     if (($type === 'code') && $responsive) {
-    	// Add padding-top if responsive attribute is set
-        $out = (($label) ? doLabel($label, $labeltag) : '').'<div class="oui_embed '.$class.'" style="padding-top:'.$ratio.'">'.$data.'</div>';
+        // Add padding-top if responsive attribute is set
+        $ratio = number_format($embed->aspectRatio, 2, '.', '').'%';
+        $out = (($label) ? doLabel($label, $labeltag) : '').\n
+              .'<div class="oui_embed '.$class.'" style="padding-top:'.$ratio.'">'.\n
+              .'    '.$data.\n
+              .'</div>'.\n;
     } else {
-        $out = (($label) ? doLabel($label, $labeltag) : '').(($wraptag) ? doTag($data, $wraptag, $class) : $data);
+        $out = (($label) ? doLabel($label, $labeltag) : '').\n
+              .(($wraptag) ? doTag($data, $wraptag, $class) : $data);
     };
 
     return $out;
