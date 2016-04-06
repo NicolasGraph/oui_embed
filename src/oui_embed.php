@@ -217,54 +217,54 @@ if (class_exists('\Textpattern\Tag\Registry')) {
 }
 
 if (txpinterface === 'admin') {
-	add_privs('prefs.oui_embed', '1');
-	add_privs('plugin_prefs.oui_embed', '1');
-	register_callback('oui_embed_welcome', 'plugin_lifecycle.oui_embed');
-	register_callback('oui_embed_install', 'prefs', null, 1);
+    add_privs('prefs.oui_embed', '1');
+    add_privs('plugin_prefs.oui_embed', '1');
+    register_callback('oui_embed_welcome', 'plugin_lifecycle.oui_embed');
+    register_callback('oui_embed_install', 'prefs', null, 1);
 }
 
 function oui_embed_welcome($evt, $stp)
 {
-	switch ($stp) {
-		case 'installed':
-		case 'enabled':
-			oui_embed_install();
-			break;
-		case 'deleted':
-			if (function_exists('remove_pref')) {
-				// 4.6 API
-				remove_pref(null, 'oui_embed');
-			} else {
-				safe_delete('txp_prefs', "event='oui_embed'");
-			}
-			safe_delete('txp_lang', "name LIKE 'oui\_embed%'");
-			break;
-	}
+    switch ($stp) {
+        case 'installed':
+        case 'enabled':
+            oui_embed_install();
+            break;
+        case 'deleted':
+            if (function_exists('remove_pref')) {
+                // 4.6 API
+                remove_pref(null, 'oui_embed');
+            } else {
+                safe_delete('txp_prefs', "event='oui_embed'");
+            }
+            safe_delete('txp_lang', "name LIKE 'oui\_embed%'");
+            break;
+    }
 }
 
 function oui_embed_install()
 {
-	if (get_pref('oui_embed_providers_oembed_parameters', null) === null) {
-		set_pref('oui_embed_providers_oembed_parameters', '', 'oui_embed', PREF_ADVANCED, 'text_input', 20);
-	}
-	if (get_pref('oui_embed_providers_oembed_embedlykey', null) === null) {
-		set_pref('oui_embed_providers_oembed_embedlykey', '', 'oui_embed', PREF_ADVANCED, 'text_input', 20);
-	}
-	if (get_pref('oui_embed_providers_oembed_iframelykey', null) === null) {
-		set_pref('oui_embed_providers_oembed_iframelykey', '', 'oui_embed', PREF_ADVANCED, 'text_input', 20);
-	}
-	if (get_pref('oui_embed_providers_html_maximages', null) === null) {
-		set_pref('oui_embed_providers_html_maximages', '', 'oui_embed', PREF_ADVANCED, 'text_input', 20);
-	}
-	if (get_pref('oui_embed_providers_facebook_key', null) === null) {
-		set_pref('oui_embed_providers_facebook_key', '', 'oui_embed', PREF_ADVANCED, 'text_input', 20);
-	}
-	if (get_pref('oui_embed_providers_google_key', null) === null) {
-		set_pref('oui_embed_providers_google_key', '', 'oui_embed', PREF_ADVANCED, 'text_input', 20);
-	}
-	if (get_pref('oui_embed_providers_soundcloud_key', null) === null) {
-		set_pref('oui_embed_providers_soundcloud_key', '', 'oui_embed', PREF_ADVANCED, 'text_input', 20);
-	}
+    if (get_pref('oui_embed_providers_oembed_parameters', null) === null) {
+        set_pref('oui_embed_providers_oembed_parameters', '', 'oui_embed', PREF_ADVANCED, 'text_input', 20);
+    }
+    if (get_pref('oui_embed_providers_oembed_embedlykey', null) === null) {
+        set_pref('oui_embed_providers_oembed_embedlykey', '', 'oui_embed', PREF_ADVANCED, 'text_input', 20);
+    }
+    if (get_pref('oui_embed_providers_oembed_iframelykey', null) === null) {
+        set_pref('oui_embed_providers_oembed_iframelykey', '', 'oui_embed', PREF_ADVANCED, 'text_input', 20);
+    }
+    if (get_pref('oui_embed_providers_html_maximages', null) === null) {
+        set_pref('oui_embed_providers_html_maximages', '', 'oui_embed', PREF_ADVANCED, 'text_input', 20);
+    }
+    if (get_pref('oui_embed_providers_facebook_key', null) === null) {
+        set_pref('oui_embed_providers_facebook_key', '', 'oui_embed', PREF_ADVANCED, 'text_input', 20);
+    }
+    if (get_pref('oui_embed_providers_google_key', null) === null) {
+        set_pref('oui_embed_providers_google_key', '', 'oui_embed', PREF_ADVANCED, 'text_input', 20);
+    }
+    if (get_pref('oui_embed_providers_soundcloud_key', null) === null) {
+        set_pref('oui_embed_providers_soundcloud_key', '', 'oui_embed', PREF_ADVANCED, 'text_input', 20);
+    }
 }
 
 function oui_embed($atts, $thing=null) {
@@ -300,26 +300,26 @@ function oui_embed($atts, $thing=null) {
     if ($needcache || $cache_time == 0) {
         
         $config = [
-		    'providers' => [
-		        'oembed' => [
-		            'parameters'  => [get_pref('oui_embed_providers_oembed_parameters')],
-		            'embedlyKey'  => get_pref('oui_embed_providers_oembed_embedlykey'),
-		            'iframelyKey' => get_pref('oui_embed_providers_oembed_iframelykey')
-		        ],
-		        'html' => [
-		            'maxImages' => get_pref('oui_embed_providers_html_maximages')
-		        ],		        
-		        'facebook' => [
-		            'key' => get_pref('oui_embed_providers_facebook_key')
-		        ],
-		        'google' => [
-		            'key' => get_pref('oui_embed_providers_google_key')
-		        ],
-		        'soundcloud' => [
-		            'key' => get_pref('oui_embed_providers_soundcloud_key')
-		        ]
-		    ]
-		];
+            'providers' => [
+                'oembed' => [
+                    'parameters'  => [get_pref('oui_embed_providers_oembed_parameters')],
+                    'embedlyKey'  => get_pref('oui_embed_providers_oembed_embedlykey'),
+                    'iframelyKey' => get_pref('oui_embed_providers_oembed_iframelykey')
+                ],
+                'html' => [
+                    'maxImages' => get_pref('oui_embed_providers_html_maximages')
+                ],                
+                'facebook' => [
+                    'key' => get_pref('oui_embed_providers_facebook_key')
+                ],
+                'google' => [
+                    'key' => get_pref('oui_embed_providers_google_key')
+                ],
+                'soundcloud' => [
+                    'key' => get_pref('oui_embed_providers_soundcloud_key')
+                ]
+            ]
+        ];
         
         $embed = Embed::create($url, $config);
     
