@@ -2,6 +2,8 @@ h1. oui_embed
 
 "Embed":https://github.com/oscarotero/Embed everything…
 
+_Get information from any web page (using oembed, opengraph, twitter-cards, scrapping the html, etc). It's compatible with any web service (youtube, vimeo, flickr, instagram, etc) and has adapters to some sites like (archive.org, github, facebook, etc)._
+
 h2. Table of contents
 
 * "Plugin requirements":#requirements
@@ -54,7 +56,7 @@ h6. Single tag use
 * @type="…"@ – _Default: code_ - The information to retrieve from the url feed. Valid values are _title, description, url, type, tags, images, image, imageWidth, imageHeight, code, width, height, aspectRatio, authorName, authorUrl, providerName, providerUrl, providerIcons, providerIcon, publishedDate_ ("More informations":https://github.com/oscarotero/Embed).
 * @label="…"@ – _Default: unset_ - The label used to entitled the generated content.
 * @labeltag="…"@ - _Default: unset_ - The HTML tag used around the value assigned to @label@.
-* @responsive="…"@ - _Default: unset_ - Uses a @div@ as wrapper if the @info@ attribute value is _code_ and adds a @padding-top@ to it according to content ratio. You still need to "set the rest of the css rules":#styling.  
+* @responsive="…"@ - _Default: unset_ - Uses a @div@ as wrapper if the @info@ attribute value is _code_ and adds a @padding-top@ to it according to content ratio. You still need to "set the rest of the css rules":#styling. Useful for video embed.  
 * @wraptag="…"@ - _Default: ul_ - The HTML tag to use around the generated content.
 
 h6. Container tag use
@@ -84,14 +86,30 @@ h2(#example). Example
 
 h3(#single). Single tag use
 
-bc. <txp:oui_embed url="https://youtu.be/PPjazi4mQSQ" />
+bc. <txp:oui_embed url="https://youtu.be/aVARdqevPfI" />
+
+returns: 
+
+bc. <iframe width="480" height="270" src="https://www.youtube.com/embed/aVARdqevPfI?feature=oembed" frameborder="0" allowfullscreen></iframe>
 
 h3(#container). Container tag use
 
-bc.. <txp:oui_embed url="https://youtu.be/PPjazi4mQSQ">
-    <txp:oui_embed_info info="code" responsive="1" label="Video" labeltag="h1"   />
-    <txp:oui_embed_info info="title" label="Title" labeltag="h2"  />
+bc.. <txp:oui_embed url="https://vimeo.com/157562955" label="Embed" labeltag="h1">
+    <txp:oui_embed_info type="code" responsive="1" label="Video" labeltag="h2"   />
+    <txp:oui_embed_info type="title" label="Title" labeltag="h2" wraptag="p" />
 </txp:oui_embed>
+
+p. returns:
+
+bc.. <h1>Embed</h1>
+
+<h2>Video</h2>
+<div class="oui_embed " style="padding-top:56.25%">
+    <iframe src="https://player.vimeo.com/video/157562955" width="1920" height="1080" frameborder="0" title="The Uses of Envy" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+</div>
+
+<h2>Title</h2>
+<p>The Uses of Envy</p>
 
 h2(#styling). Styling
 
@@ -99,7 +117,7 @@ h3. Responsive use
 
 To make your embed content fit the width of its container and keep its ratio, use the @responsive@ attribute…
 
-bc. <txp:oui_embed url="https://www.youtube.com/watch?v=PP1xn5wHtxE" responsive="1" />
+bc. <txp:oui_embed url="…" responsive="1" />
 
 …and add the following css rules to your stylesheet.
 
