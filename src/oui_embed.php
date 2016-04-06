@@ -62,6 +62,7 @@ h2. Table of contents
 
 * "Plugin requirements":#requirements
 * "Installation":#installation
+* "Preferences":#prefs
 * "Tags":#tags
 ** "oui_embed":#oui_embed
 ** "oui_embed_info":#oui_embed_info
@@ -83,6 +84,10 @@ h2(#installation). Installation
 
 # Download "Embed":https://github.com/oscarotero/Embed/releases by Oscar Otero, rename the _src_ folder to _embed_ and paste it in your *textpattern/vendors* folder;
 # paste the content of the plugin file under the *Admin > Plugins*, upload it and install.
+
+h2(#prefs). Preferences
+
+Visit the plugin prefs to add additional parameters or key needed for some providers. 
 
 h2(#tags). Tags
 
