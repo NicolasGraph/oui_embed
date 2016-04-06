@@ -4,6 +4,8 @@ h1. oui_embed
 
 _Get information from any web page (using oembed, opengraph, twitter-cards, scrapping the html, etc). It's compatible with any web service (youtube, vimeo, flickr, instagram, etc) and has adapters to some sites like (archive.org, github, facebook, etc)._
 
+"Download":https://github.com/NicolasGraph/oui_embed/releases | "Donate":https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=PREHX3MZMXEUN
+
 h2. Table of contents
 
 * "Plugin requirements":#requirements
