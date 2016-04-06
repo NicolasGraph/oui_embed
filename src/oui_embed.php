@@ -4,7 +4,7 @@ $plugin['name'] = 'oui_embed';
 
 $plugin['allow_html_help'] = 0;
 
-$plugin['version'] = '0.3.1';
+$plugin['version'] = '0.3.3';
 $plugin['author'] = 'Nicolas Morand';
 $plugin['author_uri'] = 'https://github.com/NicolasGraph';
 $plugin['description'] = 'Embed everything';
@@ -16,11 +16,34 @@ $plugin['type'] = 1;
 // Plugin 'flags' signal the presence of optional capabilities to the core plugin loader.
 // Use an appropriately OR-ed combination of these flags.
 // The four high-order bits 0xf000 are available for this plugin's private use.
-// if (!defined('PLUGIN_HAS_PREFS')) define('PLUGIN_HAS_PREFS', 0x0001); // This plugin wants to receive "plugin_prefs.{$plugin['name']}" events
+if (!defined('PLUGIN_HAS_PREFS')) define('PLUGIN_HAS_PREFS', 0x0001); // This plugin wants to receive "plugin_prefs.{$plugin['name']}" events
 if (!defined('PLUGIN_LIFECYCLE_NOTIFY')) define('PLUGIN_LIFECYCLE_NOTIFY', 0x0002); // This plugin wants to receive "plugin_lifecycle.{$plugin['name']}" events
 
 // $plugin['flags'] = PLUGIN_HAS_PREFS | PLUGIN_LIFECYCLE_NOTIFY;
 $plugin['flags'] = PLUGIN_HAS_PREFS | PLUGIN_LIFECYCLE_NOTIFY;
+
+// Plugin 'textpack' is optional. It provides i18n strings to be used in conjunction with gTxt().
+$plugin['textpack'] = <<< EOT
+#@public
+#@language en-gb
+oui_embed => Embed
+oui_embed_providers_oembed_parameters => oembed parameters
+oui_embed_providers_oembed_embedlykey => oembed.ly api key 
+oui_embed_providers_oembed_iframelykey => Iframely api key
+oui_embed_providers_html_maximages => HTML max images
+oui_embed_providers_facebook_key => Facebook api key
+oui_embed_providers_google_key => Google api Key
+oui_embed_providers_soundcloud_key => SoundCloud api key
+#@language fr-fr
+oui_embed => Intégration
+oui_embed_providers_oembed_parameters => Paramètres oembed
+oui_embed_providers_oembed_embedlykey => Clé d'api oembed.ly 
+oui_embed_providers_oembed_iframelykey => Clé d'api Iframely
+oui_embed_providers_html_maximages => HTML max images
+oui_embed_providers_facebook_key => Clé d'api Facebook
+oui_embed_providers_google_key => Clé d'api Google
+oui_embed_providers_soundcloud_key => Clé d'api SoundCloud
+EOT;
 
 if (!defined('txpinterface'))
     @include_once('zem_tpl.php');
@@ -188,8 +211,59 @@ if (class_exists('\Textpattern\Tag\Registry')) {
         ->register('oui_embed_info');
 }
 
+if (txpinterface === 'admin') {
+	add_privs('prefs.oui_embed', '1');
+	add_privs('plugin_prefs.oui_embed', '1');
+	register_callback('oui_embed_welcome', 'plugin_lifecycle.oui_embed');
+	register_callback('oui_embed_install', 'prefs', null, 1);
+}
+
+function oui_embed_welcome($evt, $stp)
+{
+	switch ($stp) {
+		case 'installed':
+		case 'enabled':
+			oui_embed_install();
+			break;
+		case 'deleted':
+			if (function_exists('remove_pref')) {
+				// 4.6 API
+				remove_pref(null, 'oui_embed');
+			} else {
+				safe_delete('txp_prefs', "event='oui_embed'");
+			}
+			safe_delete('txp_lang', "name LIKE 'oui\_embed%'");
+			break;
+	}
+}
+
+function oui_embed_install()
+{
+	if (get_pref('oui_embed_providers_oembed_parameters', null) === null) {
+		set_pref('oui_embed_providers_oembed_parameters', '', 'oui_embed', PREF_ADVANCED, 'text_input', 20);
+	}
+	if (get_pref('oui_embed_providers_oembed_embedlykey', null) === null) {
+		set_pref('oui_embed_providers_oembed_embedlykey', '', 'oui_embed', PREF_ADVANCED, 'text_input', 20);
+	}
+	if (get_pref('oui_embed_providers_oembed_iframelykey', null) === null) {
+		set_pref('oui_embed_providers_oembed_iframelykey', '', 'oui_embed', PREF_ADVANCED, 'text_input', 20);
+	}
+	if (get_pref('oui_embed_providers_html_maximages', null) === null) {
+		set_pref('oui_embed_providers_html_maximages', '', 'oui_embed', PREF_ADVANCED, 'text_input', 20);
+	}
+	if (get_pref('oui_embed_providers_facebook_key', null) === null) {
+		set_pref('oui_embed_providers_facebook_key', '', 'oui_embed', PREF_ADVANCED, 'text_input', 20);
+	}
+	if (get_pref('oui_embed_providers_google_key', null) === null) {
+		set_pref('oui_embed_providers_google_key', '', 'oui_embed', PREF_ADVANCED, 'text_input', 20);
+	}
+	if (get_pref('oui_embed_providers_soundcloud_key', null) === null) {
+		set_pref('oui_embed_providers_soundcloud_key', '', 'oui_embed', PREF_ADVANCED, 'text_input', 20);
+	}
+}
+
 function oui_embed($atts, $thing=null) {
-    global $embed;
+    global $prefs, $embed;
 
     extract(lAtts(array(
         'url'        => '',
@@ -220,7 +294,29 @@ function oui_embed($atts, $thing=null) {
     // Cache_time is not set, or a new cache file is needed; throw a new request
     if ($needcache || $cache_time == 0) {
         
-        $embed = Embed::create($url);
+        $config = [
+		    'providers' => [
+		        'oembed' => [
+		            'parameters'  => [get_pref('oui_embed_providers_oembed_parameters')],
+		            'embedlyKey'  => get_pref('oui_embed_providers_oembed_embedlykey'),
+		            'iframelyKey' => get_pref('oui_embed_providers_oembed_iframelykey')
+		        ],
+		        'html' => [
+		            'maxImages' => get_pref('oui_embed_providers_html_maximages')
+		        ],		        
+		        'facebook' => [
+		            'key' => get_pref('oui_embed_providers_facebook_key')
+		        ],
+		        'google' => [
+		            'key' => get_pref('oui_embed_providers_google_key')
+		        ],
+		        'soundcloud' => [
+		            'key' => get_pref('oui_embed_providers_soundcloud_key')
+		        ]
+		    ]
+		];
+        
+        $embed = Embed::create($url, $config);
     
         // Container tag use
         if ($thing === null) {
