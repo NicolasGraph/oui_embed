@@ -32,7 +32,7 @@ oui_embed_providers_oembed_embedlykey => oembed.ly api key
 oui_embed_providers_oembed_iframelykey => Iframely api key
 oui_embed_providers_html_maximages => HTML max images
 oui_embed_providers_facebook_key => Facebook api key
-oui_embed_providers_google_key => Google api Key
+oui_embed_providers_google_key => Google Maps api Key
 oui_embed_providers_soundcloud_key => SoundCloud api key
 #@language fr-fr
 oui_embed => Intégration
@@ -41,7 +41,7 @@ oui_embed_providers_oembed_embedlykey => Clé d'api oembed.ly
 oui_embed_providers_oembed_iframelykey => Clé d'api Iframely
 oui_embed_providers_html_maximages => HTML max images
 oui_embed_providers_facebook_key => Clé d'api Facebook
-oui_embed_providers_google_key => Clé d'api Google
+oui_embed_providers_google_key => Clé d'api Google Maps
 oui_embed_providers_soundcloud_key => Clé d'api SoundCloud
 EOT;
 
@@ -206,7 +206,6 @@ This plugin is distributed under "MIT license":https://opensource.org/licenses/M
 }
 
 # --- BEGIN PLUGIN CODE ---
-
 use Embed\Embed;
 
 if (class_exists('\Textpattern\Tag\Registry')) {
@@ -323,7 +322,7 @@ function oui_embed($atts, $thing=null) {
         
         $embed = Embed::create($url, $config);
     
-        // Container tag use
+        // Single tag use
         if ($thing === null) {
 
             $data = $embed->$type;
@@ -340,7 +339,7 @@ function oui_embed($atts, $thing=null) {
                       .(($wraptag) ? doTag($data, $wraptag, $class) : $data);
             };
 
-        // Single tag use
+        // Container tag use
         } else {
             $data = parse($thing);
             $out = (($label) ? doLabel($label, $labeltag) : '').\n
@@ -359,9 +358,9 @@ function oui_embed($atts, $thing=null) {
         }
         // Time stamp and write the new cache files and return
         set_pref('cacheset', time(), 'oui_embed', PREF_HIDDEN, 'text_input'); 
-        $rh = fopen($cachefile,'w+');
-        fwrite($rh,$out);
-        fclose($rh);
+        $cache = fopen($cachefile,'w+');
+        fwrite($cache,$out);
+        fclose($cache);
     }
 
     // Cache is on and file is found, get it!
