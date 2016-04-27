@@ -1,4 +1,4 @@
-h1. oui_embed
+h1. oui_embed <img src="https://img.shields.io/badge/textpattern-4.5+-brightgreen.svg" /> <img src="https://img.shields.io/badge/dependency-Embed-green.svg" />
 
 "Embed":https://github.com/oscarotero/Embed everything…
 
