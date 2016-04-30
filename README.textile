@@ -1,4 +1,4 @@
-h1. oui_embed <img src="https://img.shields.io/badge/Textpattern-4.5+-brightgreen.svg" /> <img src="https://img.shields.io/badge/Dependency-Embed-green.svg" />
+h1. oui_embed <img src="https://img.shields.io/badge/Textpattern-4.5+-brightgreen.svg" /> <img src="https://img.shields.io/badge/Dependency-Embed-green.svg" /> <img src="https://img.shields.io/github/release/NicolasGraph/oui_embed.svg?maxAge=2592000" />
 
 "Embed":https://github.com/oscarotero/Embed everything…
 
