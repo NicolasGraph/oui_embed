@@ -28,7 +28,7 @@ $plugin['textpack'] = <<< EOT
 #@language en-gb
 oui_embed => Embed
 oui_embed_providers_oembed_parameters => oembed parameters
-oui_embed_providers_oembed_embedlykey => oembed.ly api key 
+oui_embed_providers_oembed_embedlykey => oembed.ly api key
 oui_embed_providers_oembed_iframelykey => Iframely api key
 oui_embed_providers_html_maximages => HTML max images
 oui_embed_providers_facebook_key => Facebook api key
@@ -37,7 +37,7 @@ oui_embed_providers_soundcloud_key => SoundCloud api key
 #@language fr-fr
 oui_embed => Intégration
 oui_embed_providers_oembed_parameters => Paramètres oembed
-oui_embed_providers_oembed_embedlykey => Clé d'api oembed.ly 
+oui_embed_providers_oembed_embedlykey => Clé d'api oembed.ly
 oui_embed_providers_oembed_iframelykey => Clé d'api Iframely
 oui_embed_providers_html_maximages => HTML max images
 oui_embed_providers_facebook_key => Clé d'api Facebook
@@ -87,7 +87,7 @@ h2(#installation). Installation
 
 h2(#prefs). Preferences
 
-Visit the plugin prefs to add additional parameters or key needed for some providers. 
+Visit the plugin prefs to add additional parameters or key needed for some providers.
 
 h2(#tags). Tags
 
@@ -97,7 +97,7 @@ Single or container tag use to embed your stuff.
 
 bc. <txp:oui_embed url="…" />
 
-h4. Attributes 
+h4. Attributes
 
 h5. Required
 
@@ -115,7 +115,7 @@ h6. Single tag use
 * @type="…"@ – _Default: code_ - The information to retrieve from the url feed. Valid values are _title, description, url, type, tags, images, image, imageWidth, imageHeight, code, width, height, aspectRatio, authorName, authorUrl, providerName, providerUrl, providerIcons, providerIcon, publishedDate_ ("More informations":https://github.com/oscarotero/Embed).
 * @label="…"@ – _Default: unset_ - The label used to entitled the generated content.
 * @labeltag="…"@ - _Default: unset_ - The HTML tag used around the value assigned to @label@.
-* @responsive="…"@ - _Default: unset_ - Uses a @div@ as wrapper if the @info@ attribute value is _code_ and adds a @padding-top@ to it according to content ratio. You still need to "set the rest of the css rules":#styling. Useful for video embed.  
+* @responsive="…"@ - _Default: unset_ - Uses a @div@ as wrapper if the @info@ attribute value is _code_ and adds a @padding-top@ to it according to content ratio. You still need to "set the rest of the css rules":#styling. Useful for video embed.
 * @wraptag="…"@ - _Default: ul_ - The HTML tag to use around the generated content.
 
 h6. Container tag use
@@ -137,7 +137,7 @@ bc. <txp:oui_embed url="…">
     <txp:oui_embed_info info="…" />
 </txp:oui_embed>
 
-h4. Attributes 
+h4. Attributes
 
 See @oui_embed@ optional attributes for single tag use.
 
@@ -147,7 +147,7 @@ h3(#single). Single tag use
 
 bc. <txp:oui_embed url="https://youtu.be/aVARdqevPfI" />
 
-returns: 
+returns:
 
 bc. <iframe width="480" height="270" src="https://www.youtube.com/embed/aVARdqevPfI?feature=oembed" frameborder="0" allowfullscreen></iframe>
 
@@ -183,8 +183,8 @@ bc. <txp:oui_embed url="…" responsive="1" />
 bc.. .oui_embed // or your wrap class // {
     position: relative;
     width: 100%;
-    
-    iframe { 
+
+    iframe {
         position: absolute;
         top: 0;
         left: 0;
@@ -297,7 +297,7 @@ function oui_embed($atts, $thing=null) {
 
     // Cache_time is not set, or a new cache file is needed; throw a new request
     if ($needcache || $cache_time == 0) {
-        
+
         $config = [
             'providers' => [
                 'oembed' => [
@@ -307,7 +307,7 @@ function oui_embed($atts, $thing=null) {
                 ],
                 'html' => [
                     'maxImages' => get_pref('oui_embed_providers_html_maximages')
-                ],                
+                ],
                 'facebook' => [
                     'key' => get_pref('oui_embed_providers_facebook_key')
                 ],
@@ -319,13 +319,17 @@ function oui_embed($atts, $thing=null) {
                 ]
             ]
         ];
-        
+
         $embed = Embed::create($url, $config);
-    
-        // Single tag use
+
+        // Container tag use
         if ($thing === null) {
 
             $data = $embed->$type;
+
+            if (is_array($data)) {
+            	implode('', $data);
+            }
 
             if (($type === 'code') && $responsive) {
                 // Add padding-top if responsive attribute is set
@@ -336,17 +340,17 @@ function oui_embed($atts, $thing=null) {
                       .'</div>'.\n;
             } else {
                 $out = (($label) ? doLabel($label, $labeltag) : '').\n
-                      .(($wraptag) ? doTag($data, $wraptag, $class) : $data);
+                      .(($wraptag) ? doWrap($data, $wraptag, $class) : $data);
             };
 
-        // Container tag use
+        // Single tag use
         } else {
             $data = parse($thing);
             $out = (($label) ? doLabel($label, $labeltag) : '').\n
                   .(($wraptag) ? doTag($data, $wraptag, $class) : $data);
         }
     }
-    
+
     // Cache file is needed
     if ($needcache) {
         // Remove old cache files
@@ -357,18 +361,18 @@ function oui_embed($atts, $thing=null) {
             }
         }
         // Time stamp and write the new cache files and return
-        set_pref('cacheset', time(), 'oui_embed', PREF_HIDDEN, 'text_input'); 
+        set_pref('cacheset', time(), 'oui_embed', PREF_HIDDEN, 'text_input');
         $cache = fopen($cachefile,'w+');
         fwrite($cache,$out);
         fclose($cache);
     }
 
     // Cache is on and file is found, get it!
-    if ($readcache) {            
+    if ($readcache) {
         $cache_out = file_get_contents($cachefile);
         return $cache_out;
-    // No cache file :(       
-    } else {            
+    // No cache file :(
+    } else {
         return $out;
     }
 }
@@ -385,7 +389,7 @@ function oui_embed_info($atts) {
         'responsive' => ''
     ),$atts));
 
-    $data = $embed->$type;    
+    $data = $embed->$type;
 
     if (($type === 'code') && $responsive) {
         // Add padding-top if responsive attribute is set
