@@ -1,4 +1,4 @@
-h1. oui_embed <img src="https://img.shields.io/badge/Textpattern-4.5+-brightgreen.svg" /> <img src="https://img.shields.io/badge/Dependency-Embed-green.svg" /> <img src="https://img.shields.io/github/release/NicolasGraph/oui_embed.svg?maxAge=2592000" />
+h1. oui_embed
 
 "Embed":https://github.com/oscarotero/Embed everything…
 
@@ -35,7 +35,7 @@ h2(#installation). Installation
 
 h2(#prefs). Preferences
 
-Visit the plugin prefs to add additional parameters or key needed for some providers. 
+Visit the plugin prefs to add additional parameters or key needed for some providers.
 
 h2(#tags). Tags
 
@@ -45,7 +45,7 @@ Single or container tag use to embed your stuff.
 
 bc. <txp:oui_embed url="…" />
 
-h4. Attributes 
+h4. Attributes
 
 h5. Required
 
@@ -63,7 +63,7 @@ h6. Single tag use
 * @type="…"@ – _Default: code_ - The information to retrieve from the url feed. Valid values are _title, description, url, type, tags, images, image, imageWidth, imageHeight, code, width, height, aspectRatio, authorName, authorUrl, providerName, providerUrl, providerIcons, providerIcon, publishedDate_ ("More informations":https://github.com/oscarotero/Embed).
 * @label="…"@ – _Default: unset_ - The label used to entitled the generated content.
 * @labeltag="…"@ - _Default: unset_ - The HTML tag used around the value assigned to @label@.
-* @responsive="…"@ - _Default: unset_ - Uses a @div@ as wrapper if the @info@ attribute value is _code_ and adds a @padding-top@ to it according to content ratio. You still need to "set the rest of the css rules":#styling. Useful for video embed.  
+* @responsive="…"@ - _Default: unset_ - Uses a @div@ as wrapper if the @info@ attribute value is _code_ and adds a @padding-top@ to it according to content ratio. You still need to "set the rest of the css rules":#styling. Useful for video embed.
 * @wraptag="…"@ - _Default: ul_ - The HTML tag to use around the generated content.
 
 h6. Container tag use
@@ -85,7 +85,7 @@ bc. <txp:oui_embed url="…">
     <txp:oui_embed_info info="…" />
 </txp:oui_embed>
 
-h4. Attributes 
+h4. Attributes
 
 See @oui_embed@ optional attributes for single tag use.
 
@@ -95,7 +95,7 @@ h3(#single). Single tag use
 
 bc. <txp:oui_embed url="https://youtu.be/aVARdqevPfI" />
 
-returns: 
+returns:
 
 bc. <iframe width="480" height="270" src="https://www.youtube.com/embed/aVARdqevPfI?feature=oembed" frameborder="0" allowfullscreen></iframe>
 
@@ -131,8 +131,8 @@ bc. <txp:oui_embed url="…" responsive="1" />
 bc.. .oui_embed // or your wrap class // {
     position: relative;
     width: 100%;
-    
-    iframe { 
+
+    iframe {
         position: absolute;
         top: 0;
         left: 0;
