@@ -1,0 +1,10 @@
+#@admin
+#@language fr-fr
+oui_embed => Intégration
+oui_embed_providers_oembed_parameters => Paramètres oembed
+oui_embed_providers_oembed_embedlykey => Clé d'api oembed.ly
+oui_embed_providers_oembed_iframelykey => Clé d'api Iframely
+oui_embed_providers_html_maximages => HTML max images
+oui_embed_providers_facebook_key => Clé d'api Facebook
+oui_embed_providers_google_key => Clé d'api Google Maps
+oui_embed_providers_soundcloud_key => Clé d'api SoundCloud

@@ -1,0 +1,10 @@
+#@admin
+#@language en-gb
+oui_embed => Embed
+oui_embed_providers_oembed_parameters => oembed parameters
+oui_embed_providers_oembed_embedlykey => oembed.ly api key
+oui_embed_providers_oembed_iframelykey => Iframely api key
+oui_embed_providers_html_maximages => HTML max images
+oui_embed_providers_facebook_key => Facebook api key
+oui_embed_providers_google_key => Google Maps api Key
+oui_embed_providers_soundcloud_key => SoundCloud api key
