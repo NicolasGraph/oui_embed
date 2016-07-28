@@ -1,6 +1,6 @@
 #@admin
 #@language fr-fr
-oui_embed => Intégration
+oui_embed => Intégration (oui_embed)
 oui_embed_providers_oembed_parameters => Paramètres oembed
 oui_embed_providers_oembed_embedlykey => Clé d'api oembed.ly
 oui_embed_providers_oembed_iframelykey => Clé d'api Iframely

@@ -1,6 +1,6 @@
 #@admin
-#@language en-gb
-oui_embed => Embed
+#Default language, en-us, en-gb
+oui_embed => Embed (oui_embed)
 oui_embed_providers_oembed_parameters => oembed parameters
 oui_embed_providers_oembed_embedlykey => oembed.ly api key
 oui_embed_providers_oembed_iframelykey => Iframely api key
