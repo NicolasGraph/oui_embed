@@ -36,37 +36,47 @@ function oui_embed_welcome($evt, $stp)
     }
 }
 
+/**
+ * Set prefs through:
+ *
+ * PREF_PLUGIN for 4.6+
+ * PREF_ADVANCED for 4.5
+ */
 function oui_embed_install()
 {
-    if (get_pref('oui_embed_providers_oembed_parameters', null) === null) {
-        set_pref('oui_embed_providers_oembed_parameters', '', 'oui_embed', PREF_ADVANCED, 'text_input', 20);
-    }
-    if (get_pref('oui_embed_providers_oembed_embedlykey', null) === null) {
-        set_pref('oui_embed_providers_oembed_embedlykey', '', 'oui_embed', PREF_ADVANCED, 'text_input', 20);
-    }
-    if (get_pref('oui_embed_providers_oembed_iframelykey', null) === null) {
-        set_pref('oui_embed_providers_oembed_iframelykey', '', 'oui_embed', PREF_ADVANCED, 'text_input', 20);
-    }
-    if (get_pref('oui_embed_providers_html_maximages', null) === null) {
-        set_pref('oui_embed_providers_html_maximages', '', 'oui_embed', PREF_ADVANCED, 'text_input', 20);
-    }
-    if (get_pref('oui_embed_providers_facebook_key', null) === null) {
-        set_pref('oui_embed_providers_facebook_key', '', 'oui_embed', PREF_ADVANCED, 'text_input', 20);
-    }
-    if (get_pref('oui_embed_providers_google_key', null) === null) {
-        set_pref('oui_embed_providers_google_key', '', 'oui_embed', PREF_ADVANCED, 'text_input', 20);
-    }
-    if (get_pref('oui_embed_providers_soundcloud_key', null) === null) {
-        set_pref('oui_embed_providers_soundcloud_key', '', 'oui_embed', PREF_ADVANCED, 'text_input', 20);
+    $prefList = array(
+        'oui_embed_providers_oembed_parameters',
+        'oui_embed_providers_oembed_embedlykey',
+        'oui_embed_providers_oembed_iframelykey',
+        'oui_embed_providers_facebook_key',
+        'oui_embed_providers_google_key',
+        'oui_embed_providers_soundcloud_key',
+    );
+
+    $position = 10;
+
+    foreach ($prefList as $pref => $options) {
+        if (get_pref($pref, null) === null) {
+            set_pref(
+                $pref,
+                '',
+                'oui_embed',
+                defined('PREF_PLUGIN') ? PREF_PLUGIN : PREF_ADVANCED,
+                'text_input',
+                $position
+            );
+        }
+        $position = ++;
     }
 }
 
-function oui_embed($atts, $thing=null) {
+function oui_embed($atts, $thing === null)
+{
     global $prefs, $embed;
 
     extract(lAtts(array(
         'url'        => '',
-        'type'       => 'code',
+        'info'       => 'code',
         'label'      => '',
         'labeltag'   => '',
         'wraptag'    => '',
@@ -74,12 +84,12 @@ function oui_embed($atts, $thing=null) {
         'responsive' => '',
         'cache_time' => '0',
         'hash_key'   => '194820'
-    ),$atts));
+    ), $atts));
 
     // Prepare cache variables
-    $keybase = md5($url.$type.$label.$labeltag.$wraptag.$class.$responsive.$thing);
+    $keybase = md5($url.$info.$label.$labeltag.$wraptag.$class.$responsive.$thing);
     $hash = str_split($hash_key);
-    $cachekey='';
+    $cachekey = '';
     foreach ($hash as $hashskip) {
         $cachekey .= $keybase[$hashskip];
     }
@@ -92,7 +102,6 @@ function oui_embed($atts, $thing=null) {
 
     // Cache_time is not set, or a new cache file is needed; throw a new request
     if ($needcache || $cache_time == 0) {
-
         $config = [
             'providers' => [
                 'oembed' => [
@@ -119,14 +128,13 @@ function oui_embed($atts, $thing=null) {
 
         // Container tag use
         if ($thing === null) {
-
-            $data = $embed->$type;
+            $data = $embed->$info;
 
             if (is_array($data)) {
-            	implode('', $data);
+                implode('', $data);
             }
 
-            if (($type === 'code') && $responsive) {
+            if (($info === 'code') && $responsive) {
                 // Add padding-top if responsive attribute is set
                 $ratio = number_format($embed->aspectRatio, 2, '.', '').'%';
                 $out = (($label) ? doLabel($label, $labeltag) : '').\n
@@ -151,14 +159,14 @@ function oui_embed($atts, $thing=null) {
         // Remove old cache files
         $oldcaches = glob($cachefile);
         if (!empty($oldcaches)) {
-            foreach($oldcaches as $todel) {
+            foreach ($oldcaches as $todel) {
                 unlink($todel);
             }
         }
         // Time stamp and write the new cache files and return
         set_pref('cacheset', time(), 'oui_embed', PREF_HIDDEN, 'text_input');
-        $cache = fopen($cachefile,'w+');
-        fwrite($cache,$out);
+        $cache = fopen($cachefile, 'w+');
+        fwrite($cache, $out);
         fclose($cache);
     }
 
@@ -172,7 +180,8 @@ function oui_embed($atts, $thing=null) {
     }
 }
 
-function oui_embed_info($atts) {
+function oui_embed_info($atts)
+{
     global $embed;
 
     extract(lAtts(array(
@@ -182,11 +191,11 @@ function oui_embed_info($atts) {
         'wraptag'    => '',
         'class'      => '',
         'responsive' => ''
-    ),$atts));
+    ), $atts));
 
-    $data = $embed->$type;
+    $data = $embed->$info;
 
-    if (($type === 'code') && $responsive) {
+    if (($info === 'code') && $responsive) {
         // Add padding-top if responsive attribute is set
         $ratio = number_format($embed->aspectRatio, 2, '.', '').'%';
         $out = (($label) ? doLabel($label, $labeltag) : '').\n
